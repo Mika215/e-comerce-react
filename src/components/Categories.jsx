@@ -7,8 +7,9 @@ padding:20px;
 display:flex;
 justify-content:space-between;
 `;
-
-const Categories = ({item}) => {
+//! try to give some animation and zoom on hover over the images for the Categories
+//! can put light balck opacity full of the rectangle 
+const Categories = () => {
   return (
     <Container >
       {categories.map((item) => (

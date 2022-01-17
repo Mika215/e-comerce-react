@@ -43,7 +43,7 @@ export const categories = [
 export const popularProducts = [
   {
     id: 1,
-    img: "https://d3o2e4jr3mxnm3.cloudfront.net/Mens-Jake-Guitar-Vintage-Crusher-Tee_68382_1_lg.png",
+    img: "https://static.nike.com/a/images/t_PDP_864_v1/f_auto,b_rgb:f5f5f5/80a482ad-cfbe-46b2-a920-6f345ae9994a/sb-shane-skate-shoes-gv8rxV.png",
   },
   {
     id: 2,
@@ -67,7 +67,7 @@ export const popularProducts = [
   },
   {
     id: 7,
-    img: "https://www.vintageindustries.nl/download_front/qympzk1762/2217_Arrow_Jacket_Forest.png",
+    img: "https://static.nike.com/a/images/t_PDP_1728_v1/f_auto,b_rgb:f5f5f5/9e191f45-9227-49a4-97a6-806487a55a34/air-huarache-le-shoes-7ggQkX.png",
   },
   {
     id: 8,
