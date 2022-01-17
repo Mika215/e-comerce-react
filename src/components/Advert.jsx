@@ -11,7 +11,8 @@ font-weight:bolder;
 
 `;
 
-
+//!try to wrapp the text so that users can be redirected into a different route where they can get info
+//regarding the PREMIUM membership and free shipping
 const Advert = () => {
     return (
        
