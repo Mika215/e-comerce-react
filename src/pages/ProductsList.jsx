@@ -41,7 +41,7 @@ const ProductsList = () => {
     <Container>
       <NavBar />
       <Advert />
-      <Title>Handmade</Title>
+      <Title>Popular Products</Title>
       <FilterContainer>
         <Filter>
           <FilterText>Filter Products:</FilterText>
