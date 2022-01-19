@@ -17,7 +17,7 @@ const Advert = () => {
     return (
        
  <Container>
-<p>Explore our PREMIUM membership benefits. ... Free shipping delivery!</p>
+<p>Explore our PREMIUM membership benefits. ... Free shipping & Return!</p>
  </Container>
     )
 }

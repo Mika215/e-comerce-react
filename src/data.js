@@ -25,17 +25,17 @@ export const sliderItems = [
 export const categories = [
   {
     id: 1,
-    img: "https://images.pexels.com/photos/5886041/pexels-photo-5886041.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+    img: "https://stylesatlife.com/wp-content/uploads/2017/04/jeans-shirt-for-Women%E2%80%99s.jpg.webp",
     title: "SHIRT STYLE!",
   },
   {
     id: 2,
-    img: "https://images.pexels.com/photos/2983464/pexels-photo-2983464.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+    img: "https://www.deccanherald.com/sites/dh/files/styles/article_detail/public/article_images/2020/05/19/file761l7028bbp111clih0k-510064542-1562614201.jpg",
     title: "LOUNGEWEAR LOVE",
   },
   {
     id: 3,
-    img: "https://images.pexels.com/photos/5480696/pexels-photo-5480696.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500",
+    img: "https://cdn-img.prettylittlething.com/9/b/d/e/9bdee73360918de80f4892c5272d1c4384e9567d_clq7701_1.jpg",
     title: "LIGHT JACKETS",
   },
 ];
@@ -47,11 +47,11 @@ export const popularProducts = [
   },
   {
     id: 2,
-    img: "https://cdn.shopify.com/s/files/1/0101/4832/products/Angela_Natural_Tee.png?v=1606780388",
+    img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQqbrMWW5xVeeOO7ZHiTKhWvu6GO4Aut2lOTn1QzskwHEPEke_oFYmqyXOqZ0PMZa95dvk&usqp=CAU",
   },
   {
     id: 3,
-    img: "https://www.prada.com/content/dam/pradanux_products/U/UCS/UCS319/1YOTF010O/UCS319_1YOT_F010O_S_182_SLF.png",
+    img: "https://encrypted-tbn3.gstatic.com/shopping?q=tbn:ANd9GcQB-Pbkl52TVVMaYZWH5R3cER0AI9VyEFbOTu7xfULuY7FbxxrgE3RlshZ4hhL5SSnidVevLegIMwY&usqp=CAc",
   },
   {
     id: 4,
@@ -63,7 +63,7 @@ export const popularProducts = [
   },
   {
     id: 6,
-    img: "https://d3o2e4jr3mxnm3.cloudfront.net/Rocket-Vintage-Chill-Cap_66374_1_lg.png",
+    img: "https://amz.luxewatches.co.uk/app/uploads/2021/10/21094509/watchesmall.png",
   },
   {
     id: 7,
