@@ -1,4 +1,5 @@
-import {useState,useEffect} from "react";
+import {useState, useEffect} from "react";
+import {useLocation, useHistory} from "react-router-dom";
 import StripeCheckout from "react-stripe-checkout";
 
 import styled from "styled-components";
@@ -28,27 +29,25 @@ const Button = styled.button`
 `;
 
 const Pay = () => {
-    const [stripeToken,setStripeToken]=useState(null)
+  const history = useHistory();
+  const [stripeToken, setStripeToken] = useState(null);
   const onToken = (token) => {
     setStripeToken(token);
   };
-useEffect(()=>{
-const makeRequest=async()=>{
-    try {
-      const res= await axios.post("http://localhost:5000/checkout/payment",{
-          tokenId:stripeToken.id,
-          amount:10000,
+  useEffect(() => {
+    const makeRequest = async () => {
+      try {
+        const res = await axios.post("http://localhost:5000/checkout/payment", {
+          tokenId: stripeToken.id,
+          amount: 10000,
+        });
+        console.log(res.data);
+      } catch (err) {
+        console.log(err);
       }
-      );
-      console.log(res.data);
-        
-    } catch (err) {
-        console.log(err)
-        
-    }
-};
-stripeToken && makeRequest() //! if there is a stripToken then we call the makeRequest function to make a post req to our server
-},[stripeToken])
+    };
+    stripeToken && makeRequest(); //! if there is a stripToken then we call the makeRequest function to make a post req to our server
+  }, [stripeToken]);
   return (
     <Container>
       <StripeCheckout
@@ -61,7 +60,15 @@ stripeToken && makeRequest() //! if there is a stripToken then we call the makeR
         stripeKey={STRIPE_PUB_KEY}
       >
         <Button>Pay Now</Button>
+       
       </StripeCheckout>
+      <button
+          onClick={() => {
+            history.goBack();
+          }}
+        >
+          Go back to Cart
+        </button>
     </Container>
   );
 };

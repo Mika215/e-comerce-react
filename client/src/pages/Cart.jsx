@@ -1,9 +1,13 @@
-import {useState} from "react";
+import {useHistory} from "react-router-dom";
+import {useEffect, useState} from "react";
 import {Add, Remove} from "@material-ui/icons";
 import styled from "styled-components";
 import Advert from "../components/Advert";
 import Footer from "../components/Footer";
 import NavBar from "../components/NavBar";
+import {useSelector} from "react-redux";
+import StripeCheckout from "react-stripe-checkout";
+const axios=require("axios");
 
 const Container = styled.div``;
 
@@ -116,49 +120,49 @@ const Hr = styled.hr`
 `;
 
 const Summary = styled.div`
-flex:1;
-border:0.5px solid lightgray;
-border-radius:10px;
-padding:20px;
-margin-top:28px;
-height:50vh;
-// display:flex;
-// flex-direction:column;
-// align-items:center;
-// justify-content:space-between;
+  flex: 1;
+  border: 0.5px solid lightgray;
+  border-radius: 10px;
+  padding: 20px;
+  margin-top: 28px;
+  height: 50vh;
+  // display:flex;
+  // flex-direction:column;
+  // align-items:center;
+  // justify-content:space-between;
 `;
 const SummaryTitle = styled.h3`
-font-weight:600;
-font-size:20px;
-text-transform: uppercase;
+  font-weight: 600;
+  font-size: 20px;
+  text-transform: uppercase;
 `;
 const SummaryItem = styled.div`
-display:flex;
-align-items:center;
-margin:30px 0px;
-justify-content:space-between;
+  display: flex;
+  align-items: center;
+  margin: 30px 0px;
+  justify-content: space-between;
 `;
 const SummaryItemText = styled.p`
-font-size:${props=>props.type==="total"? "22px" :"18px"};
-font-weight:${props=>props.type==="total"&& 800};
+  font-size: ${(props) => (props.type === "total" ? "22px" : "18px")};
+  font-weight: ${(props) => props.type === "total" && 800};
 `;
 const SummaryItemPrice = styled.span`
-font-size:${props=>props.type==="total"? "22px" :"20px"};
-text-decoration:${props=>props.type==="total"&& "underline"};
-font-weight:${props=>props.type==="total"&& 800}`;
+  font-size: ${(props) => (props.type === "total" ? "22px" : "20px")};
+  text-decoration: ${(props) => props.type === "total" && "underline"};
+  font-weight: ${(props) => props.type === "total" && 800};
+`;
 const Button = styled.button`
-padding: 10px;
-width:100%;
+  padding: 10px;
+  width: 100%;
 
-font-weight: 500;
-text-transform: uppercase;
+  font-weight: 500;
+  text-transform: uppercase;
   cursor: pointer;
-  background-color:black;
-  color:white;
-  border:none;
-  font-size:15px;
-
-  `;
+  background-color: black;
+  color: white;
+  border: none;
+  font-size: 15px;
+`;
 
 const defaultProduct = {
   id: "888902",
@@ -168,9 +172,39 @@ const defaultProduct = {
   price: "24",
 };
 const Cart = () => {
+  const history = useHistory();
   const initialPrice = defaultProduct.price;
   const [totalPrice, setTotalPrice] = useState(initialPrice);
   const [quantity, setQuantity] = useState(1);
+  const [isLogedIn, setIsLogedIn] = useState(false);
+  const [stripeToken, setStripeToken] = useState(null);
+  const STRIPE_PUB_KEY =
+    "pk_test_51KM9NICwmXA1Le58gvk9arhAEtbD8OMJwMZwfHLwVoG9wBrtqx7cG6aR3qJxGUlatujpTElH43BGtTxfqZVI9IHt00d6w2KTHD";
+
+  
+
+  const onToken = (token) => {
+    setStripeToken(token);
+     
+  };
+ 
+
+ 
+  const cart = useSelector((state) => state.cart);
+  //!tempo data
+  let estShiping = 15;
+  let shipDiscount = 5;
+
+  const hasToken = localStorage.getItem("accessToken");
+  const checkUserAuth = () => {
+    if (hasToken) {
+      setIsLogedIn(true);
+    }
+  };
+  if (isLogedIn) {
+    //!this woll be printed out if the user is logedin it prevents from printing out the default value which is False.
+    console.log("User is logedin:" + isLogedIn);
+  }
 
   const add = () => {
     setQuantity(quantity + 1);
@@ -192,6 +226,25 @@ const Cart = () => {
       setTotalPrice(tempo);
     }
   };
+ 
+  useEffect(()=>{
+    const makePaymentRequest= async()=>{
+      try {
+        const res = await axios.post("http://localhost:5000/checkout/payment", {
+          tokenId: stripeToken.id,
+          amount: cart.totalAmount*100,
+      
+        });
+       
+        history.push("/success",{data:res.data})
+      } catch (err) {
+        console.log(err)
+        
+      }
+    }
+   stripeToken && cart.totalAmount>=1 && makePaymentRequest()
+  
+  },[stripeToken,cart.totalAmount,history]);
 
   return (
     <Container>
@@ -202,96 +255,112 @@ const Cart = () => {
         <Top>
           <TopButton>Continue Shoping</TopButton>
           <TopTextContainer>
-            <TopText>Your Shoping Bag (2)</TopText>
+            <TopText>Your Shoping Bag {cart.products.length}</TopText>
             <TopText>Your Wish list(8)</TopText>
           </TopTextContainer>
-          <TopButton type="filled">Check-out now</TopButton>
+          <TopButton
+            onClick={() => {
+              history.push("/pay");
+              console.log(
+                "Your order summary has been sent to your email address"
+              );
+            }}
+            type="filled"
+          >
+            Check-out now
+          </TopButton>
         </Top>
         <Bottom>
           <Info>
-            <Product>
-              <ProductDetails>
-                <Image
-                  src={
-                    "https://di2ponv0v5otw.cloudfront.net/posts/2019/06/09/5cfd25d9d1aa25b0f9995d88/m_5cfd25fabb22e3b9095b7248.jpg"
-                  }
-                />
-                <Details>
-                  <ProductName>
-                    <b>Product: </b>Nick Sport
-                  </ProductName>
-                  <ProductId>
-                    <b>Id: </b>898234
-                  </ProductId>
-                  {/* //!for each product it will have it's own assigned collor in the DB;using the props we can dinamically change the colors */}
-                  <ProductColor color={"gray"}></ProductColor>
-                  <ProductSize>
-                    <b>Size: </b>43
-                  </ProductSize>
-                </Details>
-                <PriceDetails>
-                  <ProductQuantityContainer>
-                    <Remove onClick={minus} />
-                    <ProductQuantity>{quantity}</ProductQuantity>
-                    <Add onClick={add} />
-                  </ProductQuantityContainer>
-                  <ProductPrice>€ {totalPrice}</ProductPrice>
-                </PriceDetails>
-              </ProductDetails>
-            </Product>
-            <Hr />
-            <Product>
-              <ProductDetails>
-                <Image
-                  src={
-                    "https://image-cdn.hypb.st/https%3A%2F%2Fhypebeast.com%2Fwp-content%2Fblogs.dir%2F6%2Ffiles%2F2018%2F09%2Fnike-air-vapormax-95-white-french-blue-0.jpg?w=960&cbr=1&q=90&fit=max"
-                  }
-                />
-                <Details>
-                  <ProductName>
-                    <b>Product: </b>Nick Casual
-                  </ProductName>
-                  <ProductId>
-                    <b>Id: </b>55572
-                  </ProductId>
-                  {/* //!for each product it will have it's own assigned collor in the DB;using the props we can dinamically change the colors */}
-                  <ProductColor color={"darkCyan"}></ProductColor>
-                  <ProductSize>
-                    <b>Size: </b>42.5
-                  </ProductSize>
-                </Details>
-                <PriceDetails>
-                  <ProductQuantityContainer>
-                    <Remove onClick={minus} />
-                    <ProductQuantity>{quantity}</ProductQuantity>
-                    <Add onClick={add} />
-                  </ProductQuantityContainer>
-                  <ProductPrice>€ {totalPrice}</ProductPrice>
-                </PriceDetails>
-              </ProductDetails>
-            </Product>
+            {cart.products.map((product) => (
+              <>
+                <Product>
+                  <ProductDetails>
+                    <Image src={product.image} />
+                    <Details>
+                      <ProductName>
+                        <b>Product: </b>
+                        {product.title}
+                      </ProductName>
+                      <ProductId>
+                        <b>Id: </b>
+                        {product._id}
+                      </ProductId>
+                      {/* //!for each product it will have it's own assigned collor in the DB;using the props we can dinamically change the colors */}
+                      <ProductColor color={product.color}></ProductColor>
+                      <ProductSize>
+                        <b>Size: </b>
+                        {product.size}
+                      </ProductSize>
+                    </Details>
+                    <PriceDetails>
+                      <ProductQuantityContainer>
+                        <Remove onClick={minus} />
+                        <ProductQuantity>{product.quantity}</ProductQuantity>
+                        <Add onClick={add} />
+                      </ProductQuantityContainer>
+                      <ProductPrice>
+                        € {product.price * product.quantity}
+                      </ProductPrice>
+                    </PriceDetails>
+                  </ProductDetails>
+                </Product>
+                <Hr />
+              </>
+            ))}
           </Info>
-          <Summary>
-            <SummaryTitle>Order Summary</SummaryTitle>
-            <SummaryItem>
-            <SummaryItemText>Subtotal</SummaryItemText>
-            <SummaryItemPrice>€ 48</SummaryItemPrice>
-            </SummaryItem>
-            <SummaryItem>
-            <SummaryItemText>Estimated Shiping</SummaryItemText>
-            <SummaryItemPrice>€6</SummaryItemPrice>
-            </SummaryItem>
-            <SummaryItem>
-            <SummaryItemText>Shiping Discount</SummaryItemText>
-            <SummaryItemPrice>€ -4</SummaryItemPrice>
-            </SummaryItem>
-            <SummaryItem>
-            <SummaryItemText type="total">Total</SummaryItemText>
-            <SummaryItemPrice type="total">€ 50</SummaryItemPrice>
-            </SummaryItem>
-           
-            <Button>Checkout Now</Button>
-          </Summary>
+
+          {cart.totalAmount ? (
+            <Summary>
+              <SummaryTitle>Order Summary</SummaryTitle>
+              <SummaryItem>
+                <SummaryItemText>Subtotal</SummaryItemText>
+                <SummaryItemPrice>€ {cart.totalAmount}</SummaryItemPrice>
+              </SummaryItem>
+              <SummaryItem>
+                <SummaryItemText>Estimated Shiping</SummaryItemText>
+                <SummaryItemPrice>
+                  €{cart.totalAmount && estShiping}
+                </SummaryItemPrice>
+              </SummaryItem>
+              <SummaryItem>
+                <SummaryItemText>Shiping Discount</SummaryItemText>
+                <SummaryItemPrice>
+                  € {cart.totalAmount && -shipDiscount}
+                </SummaryItemPrice>
+              </SummaryItem>
+              <SummaryItem>
+                <SummaryItemText type="total">Total</SummaryItemText>
+                <SummaryItemPrice type="total">
+                  €{" "}
+                  {cart.totalAmount &&
+                    cart.totalAmount + (estShiping - shipDiscount)}
+                </SummaryItemPrice>
+              </SummaryItem>
+
+              <StripeCheckout
+                name="DallolMart"
+                image="https://i.pinimg.com/280x280_RS/f0/c7/30/f0c730d4740bcf7ba03fcfa84bfdabbf.jpg"
+                description={`Your total amount is €${
+                  cart.totalAmount + (estShiping - shipDiscount)
+                }`} //!the amount should be rearanged dynamically ={order.amount}?
+                billingAddress
+                shippingAddress
+                amount={(cart.totalAmount + (estShiping - shipDiscount)) * 100}
+                token={onToken}
+                stripeKey={STRIPE_PUB_KEY}
+              >
+                <Button
+                  onClick={checkUserAuth}
+                  // {isLogedIn && (()=>history.push("/pay"))}
+                >
+                  Checkout Now
+                </Button>
+              </StripeCheckout>
+            </Summary>
+          ) : (
+            "Your shoping Cart is Empty!"
+          )}
         </Bottom>
       </Wrapper>
       <Footer />

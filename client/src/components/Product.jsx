@@ -3,6 +3,7 @@ import {
   SearchOutlined,
   ShoppingCartOutlined,
 } from "@material-ui/icons";
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 
 const Info = styled.div`
@@ -18,7 +19,7 @@ const Info = styled.div`
   justify-content: center;
   transition: all 0.7s ease;
   z-index: 3;
-  cursor:pointer;
+  cursor: pointer;
 `;
 const Container = styled.div`
   flex: 1;
@@ -55,27 +56,28 @@ const IconContainer = styled.div`
   align-items: center;
   justify-content: center;
   margin: 10px;
- 
+
   &:hover {
     background-color: #e9f5f5;
     transform: scale(1.1);
     transition: all 0.5s ease;
-   
   }
 `;
 
-const Product = ({product}) => {
+const Product = ({item}) => {
   return (
-    <Container>
+    <Container key={item.id}>
       <Circle />
-      <Image src={product.img} />
+      <Image src={item.image} />
       <Info>
         <IconContainer>
           <ShoppingCartOutlined />
         </IconContainer>
 
         <IconContainer>
-          <SearchOutlined />
+          <Link to={`/product/${item._id}`}>
+            <SearchOutlined />
+          </Link>
         </IconContainer>
 
         <IconContainer>

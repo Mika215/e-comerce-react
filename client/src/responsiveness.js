@@ -1,5 +1,5 @@
 import {css} from "styled-components";
-//deining media queries using styled components
+//defining media queries using styled components
 
 //mobile
 export const mobile = (props) => {
