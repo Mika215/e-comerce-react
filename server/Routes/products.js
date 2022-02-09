@@ -61,7 +61,7 @@ router.get("/find/:id", async (req, res) => {
 //get all products
 router.get("/", async (req, res) => {
   const queryNew = req.query.new;
-  //!query by category has some bugs chek it out agin
+  //query should be as follows http://localhost:5000/products?category=nameOfCategory
   const queryCategory = req.query.category;
 
   try {
@@ -70,7 +70,7 @@ router.get("/", async (req, res) => {
       products = await Product.find().sort({createdAt: -1}).limit(5);
     } else if (queryCategory) {
       products = await Product.find({
-        catagories: {
+        categories: {
           $in: [queryCategory],
         },
       });
@@ -79,8 +79,8 @@ router.get("/", async (req, res) => {
     }
 
     res.status(200).send(products);
-    console.log("new visitor:");
-    console.log(`on ${new Date().toString().substring(0, 30)}`);
+    // console.log("new visitor:");
+    // console.log(`on ${new Date().toString().substring(0, 30)}`);
   } catch (err) {
     res.status(500).send(err);
   }

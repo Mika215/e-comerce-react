@@ -6,10 +6,8 @@ const JWTKey = process.env.JWT_SEC_KEY;
 const {
   verifyTokenAndAuth,
   verifyTokenAndAdmin,
-  verifyToken
+  verifyToken,
 } = require("../Middleware/verifyToken");
-
-
 
 //register new user
 // ! generator console.log(require('crypto').randomBytes(64).toString('hex'))
@@ -22,6 +20,7 @@ router.post("/register", async (req, res) => {
       password: hashedPassword,
       email: req.body.email,
       firstName: req.body.firstName,
+      lastName: req.body.lastName,
     });
     const savedUser = await newUser.save();
     res
@@ -43,20 +42,37 @@ router.post("/login", async (req, res) => {
   }
   try {
     if (await bcrypt.compare(password, user.password)) {
-      const token = jwt.sign(
+      const accessToken = jwt.sign(
         {id: user.id, username: user.username, isAdmin: user.isAdmin},
         JWTKey,
         {expiresIn: "1h"}
       );
 
       const {password, ...others} = user._doc; // !this returns us back only the user without password /cause mongoDB stores the infor inside _doc
-      res.status(200).send(` ${user.username}: loged in suceess! ${token}`);
-      console.log(others);
+      res.status(200).send({...others, accessToken});
+      // .send(` ${user.username}: loged in suceess! ${token}`);
+      console.log({...others, accessToken});
     } else {
       res.status(403).send("username and password doesn't match!");
     }
   } catch (error) {
     console.log(error);
+  }
+});
+
+//TODO: logout
+router.get("/logout", async (req, res) => {
+  const authHeader = req.headers.token;
+  try {
+    if (await bcrypt.compare(password, user.password)) {
+      const accessToken = jwt.sign(" ", JWTKey, {expiresIn: 1});
+      res.status(200).send(accessToken);
+      console.log(accessToken);
+    } else {
+      res.status(404).send("Something went wrong");
+    }
+  } catch (err) {
+    console.log(err);
   }
 });
 
@@ -125,28 +141,28 @@ router.get("/", verifyTokenAndAdmin, async (req, res) => {
 
 //Get user statistics
 
-router.get("/stats", verifyTokenAndAdmin,async (req, res) => {
+router.get("/stats", verifyTokenAndAdmin, async (req, res) => {
   const date = new Date();
   const lastYear = new Date(date.setFullYear(date.getFullYear() - 1));
-console.log(lastYear)
+  console.log(lastYear);
   try {
     const data = await User.aggregate([
       {$match: {createdAt: {$gte: lastYear}}},
       {
-        $project:{
-          month:{$month:"$createdAt"},
+        $project: {
+          month: {$month: "$createdAt"},
         },
       },
       {
-        $group:{
-          _id:"$month",
-          total:{$sum:1},
+        $group: {
+          _id: "$month",
+          total: {$sum: 1},
         },
       },
     ]);
-    res.status(200).send(data)
+    res.status(200).send(data);
   } catch (err) {
-    res.status(500).send(err)
+    res.status(500).send(err);
   }
 });
 

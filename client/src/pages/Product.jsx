@@ -1,10 +1,14 @@
 import {Add, Remove} from "@material-ui/icons";
-import {useState} from "react";
+import {useState, useEffect} from "react";
+import {useLocation, useHistory} from "react-router-dom";
 import styled from "styled-components";
 import Advert from "../components/Advert";
 import Footer from "../components/Footer";
 import NavBar from "../components/NavBar";
 import NewsLetter from "../components/NewsLetter";
+import {useDispatch, useSelector} from "react-redux";
+import {addProduct} from "../redux/cartRedux";
+const axios = require("axios");
 
 const Container = styled.div``;
 const Wrapper = styled.div`
@@ -31,8 +35,8 @@ const Description = styled.p`
   margin: 20px 0px;
 `;
 const Price = styled.span`
-  font-size: 2rem;
-  font-weight: 300;
+  font-size: 1.7rem;
+  font-weight: 600;
 `;
 
 const FilterContainer = styled.div`
@@ -58,7 +62,7 @@ const FilterColor = styled.div`
   border-radius: 50%;
   margin: 0px 5px;
   cursor: pointer;
-  background-color: #${(props) => props.color};
+  background-color: ${(props) => props.color};
 `;
 
 const FilterSize = styled.select`
@@ -76,16 +80,16 @@ const AddContainer = styled.div`
   justify-content: space-between;
 `;
 
-const AmountContainer = styled.div`
+const QuantityContainer = styled.div`
   display: flex;
   align-items: center;
   font-weight: 700;
 `;
 
-const Amount = styled.span`
+const Quantity = styled.span`
   width: 30px;
   height: 30px;
-  font-size:1.3rem;
+  font-size: 1.3rem;
   border-radius: 8px;
   border: 2px solid lightgray;
   display: flex;
@@ -99,7 +103,7 @@ const Button = styled.button`
   color: black;
   padding: 12px;
   border: 2px solid black;
- border-radius:5px;
+  border-radius: 5px;
   cursor: pointer;
   font-size: 1rem;
   font-weight: 700;
@@ -110,19 +114,52 @@ const Button = styled.button`
 `;
 
 const Product = () => {
-  const [amount, setAmount] = useState(1);
-
-  const add = () => {
-    setAmount(amount + 1);
+  const location = useLocation();
+  const id = location.pathname.split("/")[2];
+  const [product, setProduct] = useState({});
+  const [quantity, setQuantity] = useState(1);
+  const [color, setColor] = useState("");
+  const [size, setSize] = useState("");
+  const dispatch = useDispatch(); //this hook tells our app that the action we are implementing is of redux there for the effect should be dispatched all over the app which are related to the specific action
+  const history = useHistory();
+  const user = useSelector((state) => state.user.currentUser);
+  const incQuantity = () => {
+    setQuantity(quantity + 1);
   };
 
-  const minus = () => {
-    if (amount < 1) {
-      setAmount(0);
+  const decQuantity = () => {
+    if (quantity <= 1) {
+      setQuantity(1);
     } else {
-      setAmount(amount - 1);
+      setQuantity(quantity - 1);
     }
   };
+
+  const handlCart = () => {
+    {
+      user
+        ? dispatch(addProduct({...product, quantity, quantity, color, size}))
+        : history.push("/login");
+    }
+  };
+
+  useEffect(() => {
+    const getSingleProduct = async () => {
+      try {
+        const res = await axios.get(
+          `http://localhost:5000/products/find/${id}`
+        );
+        // console.log(res.data);
+        setProduct(res.data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    getSingleProduct();
+  }, [id]);
+  // console.log(color)
+  // console.log(size)
 
   return (
     <Container>
@@ -130,49 +167,44 @@ const Product = () => {
       <Advert />
       <Wrapper>
         <ImageContainer>
-          <Image
-            src={
-              "https://www.famousfootwear.com/blob/product-images/20000/32/67/6/32676_pair_large.jpg"
-            }
-          />
+          <Image src={product.image} />
         </ImageContainer>
         <InfoContainer>
-          <Title>Puma Shoes</Title>
-          <Description>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Quis,
-            recusandae. Lorem ipsum dolor sit amet, consectetur adipisicing
-            elit. Debitis, soluta. Lorem ipsum dolor sit amet consectetur. Lorem
-            ipsum dolor sit amet consectetur adipisicing elit. Quis, recusandae.
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Debitis,
-            soluta. Lorem ipsum dolor sit amet consectetur
-          </Description>
-          <Price>$ 24</Price>
+          <Title>{product.title}</Title>
+          <Description>{product.description}</Description>
+          <Price>$ {product.price}</Price>
           <FilterContainer>
             <Filter>
               <FilterTitle>Color</FilterTitle>
-              <FilterColor color="000000" />
-              <FilterColor color="1a237e" />
-              <FilterColor color="9e9e9e" />
+
+              {product.color?.map(
+                (
+                  c //!checking if the array does exist with ternery operator was life saving
+                ) => (
+                  <FilterColor color={c} key={c} onClick={() => setColor(c)} />
+                )
+              )}
             </Filter>
             <Filter>
               <FilterTitle>Size</FilterTitle>
-              <FilterSize>
-                <FilterSizeOption>XS</FilterSizeOption>
-                <FilterSizeOption>S</FilterSizeOption>
-                <FilterSizeOption>M</FilterSizeOption>
-                <FilterSizeOption>L</FilterSizeOption>
-                <FilterSizeOption>XL</FilterSizeOption>
-                <FilterSizeOption>XXL</FilterSizeOption>
+              <FilterSize onChange={(e) => setSize(e.target.value)}>
+                {product.size?.map(
+                  (
+                    s //!same here the map throws error if you don't use the ternary operator. thanks to stackOverFlow ...uufffff!
+                  ) => (
+                    <FilterSizeOption key={s}>{s}</FilterSizeOption>
+                  )
+                )}
               </FilterSize>
             </Filter>
           </FilterContainer>
           <AddContainer>
-            <AmountContainer>
-              <Remove onClick={minus} style={{cursor: "pointer"}} />
-              <Amount>{amount}</Amount>
-              <Add onClick={add} style={{cursor: "pointer"}} />
-            </AmountContainer>
-            <Button>Add to Cart</Button>
+            <QuantityContainer>
+              <Remove onClick={decQuantity} style={{cursor: "pointer"}} />
+              <Quantity>{quantity}</Quantity>
+              <Add onClick={incQuantity} style={{cursor: "pointer"}} />
+            </QuantityContainer>
+            <Button onClick={() => handlCart()}>Add to Cart</Button>
           </AddContainer>
         </InfoContainer>
       </Wrapper>

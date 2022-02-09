@@ -4,6 +4,8 @@ import SearchIcon from "@material-ui/icons/Search";
 import {Badge} from "@material-ui/core";
 import {ShoppingCartOutlined} from "@material-ui/icons";
 import {mobile} from "../responsiveness";
+import {Link, useHistory} from "react-router-dom";
+import {useSelector} from "react-redux";
 
 const Container = styled.div`
   height: 65px;
@@ -86,11 +88,22 @@ const MenuItem = styled.div`
 `;
 
 const NavBar = () => {
+  const history = useHistory();
+
+  const quantity = useSelector((state) => state.cart.quantity);
+  const user = useSelector((state) => state.user);
+  // console.log(quantity);
   return (
     <Container>
       <Wrapper>
         <Left>
-          <Logo>DallolMart</Logo>
+          <Logo
+            onClick={() => {
+              history.push("/");
+            }}
+          >
+            DallolMart
+          </Logo>
         </Left>
         <Center>
           <Language>EN</Language>
@@ -100,13 +113,45 @@ const NavBar = () => {
           </SearchContainer>
         </Center>
         <Right>
-          <MenuItem>Sign Up</MenuItem>
-          <MenuItem>Login</MenuItem>
-          <MenuItem>
-            <Badge badgeContent={5} color="secondary">
-              <ShoppingCartOutlined />
-            </Badge>
+        <Link to={user.currentUser!==null?`/users/myprofile/${user.currentUser._id}`:"/register"} style={{textDecoration:"none", }}>
+          <MenuItem
+            // onClick={() => {
+            //   history.push("/register");
+            //   console.log(history);
+            //   console.log("redirected to registration page");
+            // }}
+          >
+            {user.currentUser!==null?`${user.currentUser.username}`:"Sign Up"}
           </MenuItem>
+          </Link>
+       {user.currentUser!==null?(   <Link to={"/logout"} style={{textDecoration:"none"}}>
+            <MenuItem
+            // onClick={() => {
+            //   history.push("/login");
+            //   console.log(history);
+            //   console.log("redirected to login page");
+            // }}
+            >
+              Logout
+            </MenuItem>
+          </Link>):(  <Link to={"/login"} style={{textDecoration:"none"}}>
+            <MenuItem
+            // onClick={() => {
+            //   history.push("/login");
+            //   console.log(history);
+            //   console.log("redirected to login page");
+            // }}
+            >
+              Login
+            </MenuItem>
+          </Link>)}
+          <Link to={"/cart"} >
+            <MenuItem>
+              <Badge badgeContent={quantity} color="secondary">
+                <ShoppingCartOutlined />
+              </Badge>
+            </MenuItem>
+          </Link>
         </Right>
       </Wrapper>
     </Container>

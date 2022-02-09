@@ -1,8 +1,12 @@
+import {useState} from "react";
+import {useLocation} from "react-router-dom";
 import styled from "styled-components";
 import Advert from "../components/Advert";
+import NewsLetter from "../components/NewsLetter";
 import Footer from "../components/Footer";
 import NavBar from "../components/NavBar";
 import Products from "../components/Products";
+
 
 const Container = styled.div``;
 
@@ -22,14 +26,14 @@ const Filter = styled.div`
 const FilterText = styled.span`
   font-size: 20px;
   font-weight: 700;
-  margin-right:20px;
+  margin-right: 20px;
 `;
 
 const Select = styled.select`
-padding:10px;
-margin-right:20px;
-font-size:0.9rem;
-font-weight: 500;
+  padding: 10px;
+  margin-right: 20px;
+  font-size: 0.9rem;
+  font-weight: 500;
 `;
 const Option = styled.option`
   // background-color:#${(props) => props.bg}
@@ -37,39 +41,46 @@ const Option = styled.option`
 `;
 
 const ProductsList = () => {
+  const [filters, setFilters] = useState({});
+  const [sort, setSort] = useState("newest");
+  const location = useLocation();
+  const category = location.pathname.split("/")[2];
+
+  const handleFilters = (e) => {
+    const value = e.target.value;
+    setFilters({
+      ...filters,
+      [e.target.name]: value,
+    });
+  };
   return (
     <Container>
       <NavBar />
       <Advert />
-      <Title>Popular Products</Title>
+      <Title>{category}</Title>
       <FilterContainer>
         <Filter>
           <FilterText>Filter Products:</FilterText>
-          <Select>
-            <Option disabled selected>
+          <Select name="color" onChange={handleFilters}>
+            <Option disabled defaultValue>
               Color
             </Option>
-            <Option color="ffffff" bg="4caf50">
-              Green
-            </Option>
-            <Option color="ffffff" bg="0091ea">
-              Blue
-            </Option>
-            <Option color="ffffff" bg="ffff00">
-              Yellow
-            </Option>
-            <Option color="ffff" bg="00000">
-              White
-            </Option>
-            <Option color="00000" bg="ffffff">
-              Black
-            </Option>
-            <Option color="ffffff" bg="bdbdbd">
-              Gray
-            </Option>
+            <Option>Blue</Option>
+            <Option>White</Option>
+            <Option>Black</Option>
+            <Option>Gray</Option>
+            <Option>Green</Option>
+            <Option>Pink</Option>
+            <Option>Yellow</Option>
+            <Option>Cyan</Option>
+            <Option>Red</Option>
           </Select>
-          <Select placeholder="Size">
-          <Option disabled selected>
+          <Select
+            name="size" //!similar changehandler function can be classified by a name property like this (name=size and name=color)
+            onChange={handleFilters}
+            selected
+          >
+            <Option disabled defaultValue>
               Size
             </Option>
             <Option>XS</Option>
@@ -78,20 +89,23 @@ const ProductsList = () => {
             <Option>L</Option>
             <Option>XL</Option>
             <Option>XXL</Option>
+            <Option>42</Option>
+            <Option>43</Option>
+            <Option>44</Option>
           </Select>
         </Filter>
         <Filter>
           <FilterText>Sort Products:</FilterText>
-          <Select>
-            <Option disabled selected>
-              Price
-            </Option>
-            <Option>Price(Asc)</Option>
-            <Option>Price(Desc)</Option>
+          <Select onChange={(e) => setSort(e.target.value)}>
+            <Option value="newest">Newest</Option>
+            <Option value="asc">Price(Asc)</Option>
+            <Option value="desc">Price(Desc)</Option>
           </Select>
         </Filter>
       </FilterContainer>
-      <Products />
+      <Products category={category} filters={filters} sort={sort} />
+      <NewsLetter />
+
       <Footer />
     </Container>
   );
