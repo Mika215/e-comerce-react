@@ -4,12 +4,15 @@
   "description": "tempo back-end for dallol-ecomerce",
   "main": "index.js",
   "dependencies": {
+    "@sendgrid/mail": "^7.6.1",
     "bcrypt": "^5.0.1",
     "cors": "^2.8.5",
     "dotenv": "^14.2.0",
     "express": "^4.17.2",
+    "googleapis": "^95.0.0",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.1.7",
+    "nodemailer": "^6.7.2",
     "stripe": "^8.200.0"
   },
   "devDependencies": {},

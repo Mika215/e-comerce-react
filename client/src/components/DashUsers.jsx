@@ -1,136 +1,165 @@
 import {React, useState} from "react";
 import styled from "styled-components";
 import {authRequest} from "../requestMethods";
-import {DataGrid} from "@material-ui/data-grid";
+
 
 const Container = styled.div`
-  flex: 4; //! i want to evenly distribute the screen width between the side bar compnent and the users/products
-  margin-bottom: 20px;
+  // flex: 4; //! i want to evenly distribute the screen width between the side bar compnent and the users/products
+  // margin-bottom: 20px;
+
+  // flex: 4;
+  padding: 20px;
+  margin-left: 15%;
 `;
-const Wrapper = styled.div`
+
+const UserWrraper = styled.div`
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
+  margin-top: 20px;
+  width: 100%;
   flex-wrap: wrap;
 `;
-const Title = styled.h2``;
 
-const ListContainer = styled.ul`
+const UserDisplay = styled.div`
+  width: 100%;
+  padding: 20px;
+  -webkit-box-shadow: 0px 0px 15px -10px rgba(0, 0, 0, 0.75);
+  box-shadow: 0px 0px 15px -10px rgba(0, 0, 0, 0.75);
+`;
+
+const UserDisplayTop = styled.div`
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  margin: 0;
-  padding: 0;
 `;
 
-const List = styled.li`
-  margin-bottom: 20px;
-  color: orange;
-  list-style-type: none;
-  margin: 10px;
+const UserDisplayImg = styled.img`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+  background-color: #9fa8da;
+  color: white;
+  font-size: 18px;
   font-weight: 600;
-  font-size: 1.3rem;
 `;
 
-const DashUsers = () => {
-const [users, setUsers] = useState([]);
-// // const[isAuth,setIsAuth]=useState(true);
-
-const getAllUsers = async () => {
-  try {
-    const res = await authRequest.get("/users");
-    setUsers(res.data);
-  } catch (err) {
-    console.log(err);
-  }
-};
-
-const handleDelete = async (userId) => {
-  alert("Are you sure you want to permanently delete user?");
-  try {
-    const res = await authRequest.delete(`/users/${userId}`);
-    console.log(res.data);
-  } catch (err) {
-    console.log(err);
-  }
-};
+const UserDisplayAvatar = styled.span`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  background-color: #9fa8da;
+  color: white;
+  font-size: 18px;
+  font-weight: 600;
+`;
 
 
+const ActionWrraper = styled.div`
+  justify-content: space-between;
+`;
 
-  const Columns = [
-    {field: "id", headerName: "ID", width: 90},
-    {
-      field: "firstName",
-      headerName: "First Name",
-      width: 150,
-      editable: true,
-    },
-    {
-      field: "lastName",
-      headerName: "Last name",
-      width: 150,
-      editable: true,
-    },
-    {
-      field: "email",
-      headerName: "Email",
-      width: 150,
-      editable: true,
-    },
-    {
-      field: "username",
-      headerName: "UserName",
-      width: 150,
-      editable: true,
-    },
-    {
-      field: "createdAt",
-      headerName: "User Created@",
-      // type: 'number',
-      width: 110,
-      editable: true,
-    },
-    {
-      field: "status",
-      headerName: "Status",
-      // type: 'number',
-      default: "Active",
-      width: 110,
-      editable: true,
-    },
-    {
-      field: "transaction",
-      headerName: "Transaction Amount",
-      type: "number",
-      width: 110,
-      editable: true,
-    },
-  ];
+const Button = styled.button`
+  width: 80px;
+  border: none;
+  padding: 6px;
+  background-color: #${(props) => (props.name === "edit" ? "2196f3" : "ef5350")};
+  //bbcd34 blue=> 1565c0  red=>ff0f0f
+  color: white;
+  font-weight: 600;
+  font-size: 14px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-right: ${(props) => props.name === "edit" && "5px"};
+  margin-left: ${(props) => props.name === "delete" && "5px"};
+`;
+const UserDisplayTitle = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin-left: 20px;
+`;
+const UserDisplayUsername = styled.span`
+  font-size: 16px;
+  font-weight: 600;
+`;
+const UserDisplayUserTitle = styled.span`
+  font-style: italic;
+  font-weight: 300;
+`;
+
+const Title = styled.h2`
+margin-bottom:10px;
+`;
 
 
- 
- 
 
-    
- 
-         
-      
+const DashUsers = (props) => {
+  const [users, setUsers] = useState([]);
 
+  const getAllUsers = async () => {
+    try {
+      const res = await authRequest.get("/users");
+      setUsers(res.data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const handleEdit = (userId) => {
+    console.log(`user with user id${userId} redy to be edited`);
+  };
+
+  const handleDelete = async (userId) => {
+    alert("Are you sure you want to permanently delete user?");
+    try {
+      const res = await authRequest.delete(`/users/${userId}`);
+      console.log(res.data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  
   return (
     <Container>
-      <Wrapper>
-        <Title>Users Category</Title>
+      <UserWrraper>
+        {users && <Title>All Users</Title>}
         {users?.map((user) => (
-          <ListContainer key={user._id}>
-            <List>{user.firstName}</List>
-            <button onClick={() => handleDelete(user._id)}>delete</button>
-          </ListContainer>
+          <UserDisplay key={user._id}>
+            <UserDisplayTop>
+            { user.image? (<UserDisplayImg src={user.image}/>)
+              :<UserDisplayAvatar>
+                {`${user.lastName}`
+                  ? `${user.firstName}`[0].toUpperCase() +
+                    `${user.lastName}`[0].toUpperCase()
+                  : `${user.firstName}`[0].toUpperCase()}
+              </UserDisplayAvatar>
+              }
+              <UserDisplayTitle>
+                <UserDisplayUsername>
+                  {user.firstName} {user.lastName}
+                </UserDisplayUsername>
+                <UserDisplayUserTitle>{user.email}</UserDisplayUserTitle>
+              </UserDisplayTitle>
+              <ActionWrraper>
+                <Button name="edit" onClick={() => handleEdit(user._id)}>
+                  Edit
+                </Button>
+                <Button name="delete" onClick={() => handleDelete(user._id)}>
+                  Delete
+                </Button>
+              </ActionWrraper>
+            </UserDisplayTop>
+          </UserDisplay>
         ))}
-      </Wrapper>
+      </UserWrraper>
       <button onClick={getAllUsers}>Get All Users</button>
-      {/* { isAuth && <span style={{color:"red",marginLeft:"20px"}}>You are not autherised to access this information</span>} */}
     </Container>
   );
 };

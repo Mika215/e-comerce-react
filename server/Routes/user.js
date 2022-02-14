@@ -2,36 +2,138 @@ const router = require("express").Router();
 const User = require("../Models/User");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const JWTKey = process.env.JWT_SEC_KEY;
 const {
   verifyTokenAndAuth,
   verifyTokenAndAdmin,
   verifyToken,
 } = require("../Middleware/verifyToken");
 
-//register new user
-// ! generator console.log(require('crypto').randomBytes(64).toString('hex'))
+const sendMail = require("../dallolEmail");
+
+//signup email verification
 router.post("/register", async (req, res) => {
-  try {
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(req.body.password, salt);
-    const newUser = new User({
-      username: req.body.username,
-      password: hashedPassword,
-      email: req.body.email,
-      firstName: req.body.firstName,
-      lastName: req.body.lastName,
-    });
-    const savedUser = await newUser.save();
-    res
-      .status(200)
-      .send(`new user saved sucsessfully! => : ${savedUser.firstName}`);
-    console.log(savedUser);
-  } catch (err) {
-    res.status(500).send(err);
-    console.log(err);
+  const {firstName, lastName, username, email, password} = req.body;
+  User.findOne({email}).exec((err, user) => {
+    if (user) {
+      console.log(err);
+      return res.status(400).send({
+        err: "User with this email already exists.Signup using other email account",
+      });
+    } else {
+
+      //TODO: passward should be hashed from the very begining to avoid security voulnerability 
+      // const salt = await bcrypt.genSalt(10);
+      // const hashedPassword = await bcrypt.hash(password, salt);
+      const emailActivationToken = jwt.sign(
+        {firstName, lastName, username, email, password},
+        process.env.JWT_EMAIL_ACT_SEC_KEY,
+        {expiresIn: "20m"}
+      );
+
+      const msg = {
+        from: "noreplay@dallolmart.com || <mikacodes@gmail.com>",
+        to: `${email}`,
+        subject: "Email Activation",
+        text: `Please Activate your dallolmart account,copy and paste the following link into your browser ${process.env.CLIENT_URL}/register/activation/${emailActivationToken} `,
+        html: `<h3>Please Activate your dallolmart account</h3>
+    
+      <p><Strong>Click the given link to redirect to the <a href=${process.env.CLIENT_URL}/register/activation/${emailActivationToken}>account activation page.</a> </strong></p>
+    `,
+      };
+      sendMail(msg)
+        .then((result) => console.log("Emailsent...", result))
+        .catch((err) => console.log(error.message));
+      console.log(email);
+      res
+        .status(200)
+        .send(
+          "account activation link has been sent to your email,\nplease check your inbox or spam box"
+        );
+    }
+  });
+});
+
+//account activation
+router.post("/activation", async (req, res) => {
+  const activationHeader = req.headers.token;
+
+  if (activationHeader) {
+    const token = activationHeader.split(" ")[1];
+
+    try {
+      //!verify if the activationToken is a valid one
+     const decodedToken=await jwt.verify(
+        token,
+        process.env.JWT_EMAIL_ACT_SEC_KEY,
+        (err, decodedToken) => {
+          if (err) {
+            return res.status(400).send({error: "Incorrect or expired link."});
+          }
+
+          return decodedToken;
+        }
+      );
+
+      //!Extracting the user detailes from the activationToken
+      const {firstName, lastName, username, email, password} = decodedToken;
+      //!hash pasword
+       //TODO: passward should be compared and if it turns to be matching then procced check the registration route password is not hashed 
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(password, salt);
+
+      //!create a new user with Mongoose model
+      const newUser = new User({
+        username: username,
+        password: hashedPassword,
+        email: email,
+        firstName: firstName,
+        lastName: lastName,
+      });
+
+      const savedUser = await newUser.save();
+      res
+        .status(200)
+        .send(`new user saved sucsessfully! => : ${savedUser.firstName}`);
+      console.log(savedUser);
+    } catch (err) {
+      console.log(err);
+    }
+  } else {
+    res.status(401).send("Something went wrong");
   }
 });
+
+//register new user
+// ! generator console.log(require('crypto').randomBytes(64).toString('hex'))
+// router.post("/register", async (req, res) => {
+//   const{name,email,password}=req.body;
+//   User.findOne({email}).exec((err,user)=>{
+//     if(user){
+//       console.log(err)
+//       return res.status(400).send({err:"User with this email already exists.Signup using other email account"})
+
+//     }
+//   })
+//   try {
+//     const salt = await bcrypt.genSalt(10);
+//     const hashedPassword = await bcrypt.hash(req.body.password, salt);
+//     const newUser = new User({
+//       username: req.body.username,
+//       password: hashedPassword,
+//       email: req.body.email,
+//       firstName: req.body.firstName,
+//       lastName: req.body.lastName,
+//     });
+//     const savedUser = await newUser.save();
+//     res
+//       .status(200)
+//       .send(`new user saved sucsessfully! => : ${savedUser.firstName}`);
+//     console.log(savedUser);
+//   } catch (err) {
+//     res.status(500).send(err);
+//     console.log(err);
+//   }
+// });
 
 //login
 router.post("/login", async (req, res) => {
@@ -44,7 +146,7 @@ router.post("/login", async (req, res) => {
     if (await bcrypt.compare(password, user.password)) {
       const accessToken = jwt.sign(
         {id: user.id, username: user.username, isAdmin: user.isAdmin},
-        JWTKey,
+        process.env.JWT_SEC_KEY,
         {expiresIn: "1h"}
       );
 
@@ -61,15 +163,20 @@ router.post("/login", async (req, res) => {
 });
 
 //TODO: logout
-router.get("/logout", async (req, res) => {
+router.post("/logout", async (req, res) => {
   const authHeader = req.headers.token;
   try {
-    if (await bcrypt.compare(password, user.password)) {
-      const accessToken = jwt.sign(" ", JWTKey, {expiresIn: 1});
+    console.log(req.user);
+    if (authHeader) {
+      const token = authHeader.split(" ")[1];
+
+      const accessToken = jwt.sign({data: ""}, process.env.JWT_SEC_KEY, {
+        expiresIn: "3m",
+      });
       res.status(200).send(accessToken);
       console.log(accessToken);
     } else {
-      res.status(404).send("Something went wrong");
+      res.status(401).send("Something went wrong");
     }
   } catch (err) {
     console.log(err);

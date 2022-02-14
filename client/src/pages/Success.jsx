@@ -1,6 +1,7 @@
 import {React,useEffect} from "react";
 import { useLocation } from "react-router-dom";
 import styled from "styled-components";
+import {useSelector} from "react-redux";
 
 const Container = styled.div`
   display: flex;
@@ -18,13 +19,18 @@ const Image = styled.img`
 `;
 const Success = () => {
   const location=useLocation()
-  // console.log(location.state.data.source.name)
+  const user = useSelector((state) => state.user.currentUser);
+  console.log(location.state.data)
   //! should find a way so that i can send email to the customer including order id and amount of money
   const summaryEmail = async () => {
     try {
       let message = `Dear ${location.state.data.source.name},
       Thanks for choosing DallolMart as your prefered shoping platform.
-      **xxx** amount of money has been deducted from your ${location.state.data.source.brand} card number: ****${location.state.data.source.last4}.
+
+      Order Summary Report
+      New stripe payment has been made on ${new Date().toString().substring(0, 30)}.
+
+      Amount €${location.state.data.amount/100}.00 has been deducted from your ${location.state.data.source.brand} card number: ****${location.state.data.source.last4}.
       we will deliver your orders within the next few days to your address @:${location.state.data.source.address_line1},${location.state.data.source.address_city},${location.state.data.source.address_country}`;
     console.log(message);
     } catch (err) {

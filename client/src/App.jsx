@@ -14,6 +14,8 @@ import Logout from "./pages/Logout";
 import MyProfile from "./pages/MyProfile";
 import Dashboard from "./pages/Dashboard";
 import Forbidden from "./pages/Forbidden";
+import AccountActivation from "./pages/AccountActivation";
+import  ActivationEmailSent from "./pages/ActivationEmailSent"
 const App = () => {
   const user = useSelector((state) => state.user.currentUser);
   {
@@ -32,7 +34,7 @@ const App = () => {
           <Route path="/product/:id">
             <Product />
           </Route>
-          <Route path="/register">
+          <Route exact path="/register">
             <Register />
           </Route>
           <Route path="/login">
@@ -54,6 +56,13 @@ const App = () => {
           <Route path="/users/myprofile/:id">
             <MyProfile />
           </Route>
+          <Route path="/register/activation/:token">
+            <AccountActivation />
+          </Route>
+          <Route path="/register/activationemailsent">
+            < ActivationEmailSent />
+          </Route>
+         
           <Route path="/dash/admin">
           {/* //!this is very helpfull but it keeps the isFetching state permanently true and can not login while is fetching */}
           {user ? user.isAdmin ? <Dashboard /> : <Login/> : <Forbidden/> }
@@ -66,3 +75,6 @@ const App = () => {
 };
 
 export default App;
+
+
+

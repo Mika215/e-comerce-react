@@ -7,20 +7,33 @@ import DashTopBar from "../components/DashTopBar";
 import DashUsers from "../components/DashUsers";
 import DashboardRoot from "./DashboardRoot";
 import Login from "./Login";
+import SingleUser from "./SingleUser";
 import {useSelector} from "react-redux";
+// import { render } from 'react-dom';
+// import { Admin, Resource } from 'react-admin';
+// import { Provider } from 'react-redux';
+// import { createHashHistory } from 'history';
+
+// import restProvider from 'ra-data-simple-rest';
+
+// import { PostList, PostEdit, PostCreate, PostIcon } from './posts';
 
 const Container = styled.div`
   position: relative;
   width: 100%;
 `;
-
+// const history = createHashHistory();
 const Dashboard = () => {
   const user = useSelector((state) => state.user.currentUser);
   // let isAuthorised=(user.isAdmin===true)
   console.log(user);
-  // // console.log(user)
-  // console.log(user.isAdmin===true)
-  // console.log(isAuthorised)
+
+
+//  return(
+//    <Admin dataProvider={restProvider("http://localhost:500")}>
+// <Resource  name="users" list={DashUsers}/>
+//    </Admin>
+//  )
 
   return (
     <Router>
@@ -36,6 +49,9 @@ const Dashboard = () => {
           </Route>
           <Route exact path="/dash/admin/products">
             <DashProducts />
+          </Route>
+          <Route exact path="/dash/admin/user/:userId">
+            <SingleUser />
           </Route>
         </Switch>
       </Container>

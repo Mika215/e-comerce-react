@@ -21,6 +21,7 @@ const userSchema = new mongoose.Schema(
     address: addressSchema,
     gender: {type: String, required: false, unique: false},
     age: {type: Number, required: false, unique: false},
+    image: {type: String},
     isAdmin: {type: Boolean, required: false, default: false},
   },
   {
