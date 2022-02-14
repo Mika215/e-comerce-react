@@ -2,16 +2,18 @@
 
 This is a full stack e-commerce. Inorder to run the code which is kept in to two separate folders(Namely `client` and `server` ) you will need to navigate through both folders as follows:\
 Front-end: `cd client` then hit `npm start` on your terminal\
-Back-end: `cd server` the `npm start`on a new terminal
+Back-end: `cd server` then `npm start`on a new terminal
 
 ## Technologies 
 In order to realize such an elegant project the following thecnologies have been used\
 ### Front-end
 
 **React**\
+**Redux**\
 **Material UI**\
 **styled components**\
 **axios**
+
 
 
 ### Back-end
@@ -19,5 +21,9 @@ In order to realize such an elegant project the following thecnologies have been
 **NodeJS**\
 **Express**\
 **MongoDB**\
-**Mongoose**
+**Mongoose**\
+**Nodemailer**\
+**GoogleAPIs**
 
+#### Payment
+**Stripe**
