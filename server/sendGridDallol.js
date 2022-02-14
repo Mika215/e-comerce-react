@@ -1,9 +1,8 @@
 // require("dotenv").config();
-const sendGridMailer = require('@sendgrid/mail')
+const sendGridMailer = require("@sendgrid/mail");
 // const SendGrid_API_KEY = process.env.SEND_GRID_API_KEY;
 
-
-sendGridMailer.setApiKey("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");
+sendGridMailer.setApiKey(process.env.SENDGRID_API_KEY);
 
 // console.log(process.env.SENDGRID_API_KEY)
 const msg = {
@@ -19,11 +18,11 @@ const msg = {
 //   .then((response) => console.log("Email Sent..."))
 //   .catch((error) => console.log(error.message));
 
-  sendGridMailer
+sendGridMailer
   .send(msg)
   .then(() => {
-    console.log('Email sent...')
+    console.log("Email sent...");
   })
   .catch((error) => {
-    console.error(error)
-  })
+    console.error(error);
+  });
