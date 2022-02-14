@@ -1,8 +1,6 @@
 import React, {useState} from "react";
 import styled from "styled-components";
-import { authRequest } from "../requestMethods";
-
-
+import {authRequest} from "../requestMethods";
 
 const Container = styled.div`
   // flex: 4; //! i want to evenly distribute the screen width between the side bar compnent and the Products/products
@@ -94,19 +92,18 @@ const ProductDisplayProductTitle = styled.span`
 `;
 
 const Title = styled.h2`
-margin-bottom:10px;
+  margin-bottom: 10px;
 `;
 const DashProducts = () => {
   const [products, setProducts] = useState([]);
 
   const getAllProducts = async () => {
     try {
-      const res=await authRequest.get("/products")
-      setProducts(res.data)
+      const res = await authRequest.get("/products");
+      setProducts(res.data);
     } catch (err) {
       console.log(err);
     }
-   
   };
 
   const handleEdit = (productId) => {
@@ -115,14 +112,12 @@ const DashProducts = () => {
 
   const handleDelete = async (productId) => {
     console.log(`product id no:${productId} will be deleted`);
-    alert("Are you sure you want to permanently delete Product?")
+    alert("Are you sure you want to permanently delete Product?");
     try {
-      const res=await authRequest.delete(`/products/${productId}`)
-      console.log(res.data)
-      
+      const res = await authRequest.delete(`/products/${productId}`);
+      console.log(res.data);
     } catch (err) {
-      console.log(err)
-      
+      console.log(err);
     }
   };
 
@@ -133,15 +128,23 @@ const DashProducts = () => {
         {products?.map((product) => (
           <ProductDisplay key={product._id}>
             <ProductDisplayTop>
-             { product.image? (<ProductDisplayImg src={product.image}/>):(<ProductDisplayAvatar>
-                {`${product.categories}`.split(",")[0].toUpperCase()}
-              </ProductDisplayAvatar>)}
+              {product.image ? (
+                <ProductDisplayImg src={product.image} />
+              ) : (
+                <ProductDisplayAvatar>
+                  {`${product.categories}`.split(",")[0].toUpperCase()}
+                </ProductDisplayAvatar>
+              )}
               <ProductDisplayTitle>
                 <ProductDisplayProductname>
                   {product.title}
                 </ProductDisplayProductname>
-                <ProductDisplayProductTitle>€{product.price}</ProductDisplayProductTitle>
-                <ProductDisplayProductTitle>{product.inStock? "In Stock":"sold out"}</ProductDisplayProductTitle>
+                <ProductDisplayProductTitle>
+                  €{product.price}
+                </ProductDisplayProductTitle>
+                <ProductDisplayProductTitle>
+                  {product.inStock ? "In Stock" : "sold out"}
+                </ProductDisplayProductTitle>
               </ProductDisplayTitle>
               <ActionWrraper>
                 <Button name="edit" onClick={() => handleEdit(product._id)}>
