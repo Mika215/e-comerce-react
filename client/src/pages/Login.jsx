@@ -58,42 +58,18 @@ const Login = () => {
   const handleLogin = (e) => {
     e.preventDefault();
     login(dispatch, {username, password});
-    history.go(-1)
+  
+    history.push("/")
   };
 
-  const logMeIn = async (e) => {
-    //   e.preventDefault();
-    //   const userData = {
-    //     username: username,
-    //     password: password,
-    //     email: email,
-    //   };
-    //   const res = await axios.post("http://localhost:5000/users/login", userData);
-    //   // console.log(res.data);//! how can i store the access token inside the client side(local memory,cookies...)
-    //   if(res.status===200){
-    //    const accessToken= res.data.split("!")[1]
-    //    history.push({state:"logedin", token:res.data.split("!")[1]}) //!asigning logedin value to the state and created token and grab the token from the response
-    //    localStorage.setItem('accessToken', accessToken)
-    //    console.log(res.data.split("!")[0] +"\nCheck your local storage")
-    //   //  console.log(history)
-    //   //!use this methode to check the token saved in localStorage and veriy useraccording to the credentials
-    //   // localStorage.getItem('accessToken')
-    //   } else {
-    //     console.log("login unsucessfull! check your password and username")
-    //   }
-    //   setUsername("");
-    //   setPassword("");
-    //   setEmail("");
-  };
-  // // logMeIn()
 
   return (
     <Container>
       <Wrapper>
         <Title>Login</Title>
-        {user.currentUser!==null && <Success>
+        {/* {user.currentUser!==null && <Success>
               Login Success!
-            </Success>}
+            </Success>} */}
         <Form>
           <Input
             required

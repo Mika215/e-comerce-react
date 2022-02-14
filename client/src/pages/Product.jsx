@@ -158,8 +158,7 @@ const Product = () => {
 
     getSingleProduct();
   }, [id]);
-  // console.log(color)
-  // console.log(size)
+
 
   return (
     <Container>

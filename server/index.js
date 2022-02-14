@@ -18,6 +18,7 @@ app.use(express.json());
 
 //creating a new DB connection with mongoose this always should be kept inside a string
 const uri = process.env.MONGO_URL;
+// const uri = process.env.CHEZNOUS_URL// !this is another DB
 
 mongoose.connect(
   uri,

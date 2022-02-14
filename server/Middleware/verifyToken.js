@@ -32,7 +32,7 @@ const verifyTokenAndAdmin = (req, res, next) => {
     if (req.user.isAdmin) {
       next();
     } else {
-      res.status(403).json("You are not authorised to delete this account!");
+      res.status(403).json("You are not authorised to perform this action!");
     }
   });
 };

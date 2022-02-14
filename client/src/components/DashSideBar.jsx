@@ -17,6 +17,7 @@ const Container = styled.div`
   top: 68px;
   left: 0;
   padding-top: 40px;
+  box-shadow: 0px 0px 12px 2.5px rgba(0, 0, 0, 0.55);
 `;
 const Wrapper = styled.div`
   display: flex;
@@ -39,7 +40,7 @@ const Item = styled.li`
 const DashSideBar = () => {
   return (
     <Container>
-      <h1>Sidebar</h1>
+      <h3>Sidebar</h3>
       <Wrapper>
         <ItemsContainer>
           <Link to={"/dash/admin/users"} style={{textDecoration: "none",color:"black"}}>

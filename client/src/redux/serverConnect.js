@@ -13,8 +13,9 @@ export const login=async(dispatch,user)=>{
 export const logout=async(dispatch,user)=>{
     dispatch(logedout());
     try {
-        const res = await axios.post("http://localhost:5000/users/login", user);//!create a logout route and endpoint for user this is sending request to login
+        const res = await axios.post("http://localhost:5000/users/logout",user);//!create a logout route and endpoint for user this is sending request to login
         dispatch(logedout(res.data));
+        console.log(res.data)
     } catch (err){
         console.log(err)
         

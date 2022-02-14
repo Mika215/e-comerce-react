@@ -54,8 +54,10 @@ const history=useHistory();
       };
       const res= await axios.post("http://localhost:5000/users/register",newUser)
         console.log(res.data)
+        // console.log(res.err)
+        // console.log(err.message)
         if(res.status===200){
-          history.push("/login");
+          history.push("/register/activationemailsent");
         }
            
       // console.log(newUser);

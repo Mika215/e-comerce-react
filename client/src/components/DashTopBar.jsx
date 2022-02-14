@@ -14,7 +14,8 @@ const Container = styled.div`
   z-index:999;
 
 background-color:white;
-box-shadow: 1px 2px rgba(215,215,215,0.60);
+// box-shadow: 1px 2px rgba(215,215,215,0.60);
+box-shadow: 0px 0px 8px 1.5px rgba(0, 0, 0, 0.5);
 
 `;
 const Left = styled.div`
@@ -45,11 +46,11 @@ const DashTopBar = () => {
   return (
     <Container>
       <Left>
-        <Logo>Dashboard/Admin</Logo>
+        <Logo>Dashboard</Logo>
       </Left>
       <Right>
         <IconContainer>
-          <Avatar style={{backgroundColor: "gray"}}>MT</Avatar>
+          <Avatar style={{backgroundColor: "#651fff"}}>MT</Avatar>
         </IconContainer>
         <IconContainer>
           <Settings />
