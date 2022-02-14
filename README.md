@@ -4,8 +4,10 @@ This is a full stack e-commerce. Inorder to run the code which is kept in to two
 Front-end: `cd client` then hit `npm start` on your terminal\
 Back-end: `cd server` then `npm start`on a new terminal
 
-## Technologies 
+## Technologies
+
 In order to realize such an elegant project the following thecnologies have been used\
+
 ### Front-end
 
 **React**\
@@ -13,8 +15,6 @@ In order to realize such an elegant project the following thecnologies have been
 **Material UI**\
 **styled components**\
 **axios**
-
-
 
 ### Back-end
 
@@ -26,4 +26,5 @@ In order to realize such an elegant project the following thecnologies have been
 **GoogleAPIs**
 
 #### Payment
+
 **Stripe**
